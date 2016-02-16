@@ -324,5 +324,61 @@ module Twitter
       tags.each{|tag| yield tag[:cashtag], tag[:indices].first, tag[:indices].last} if block_given?
       tags
     end
+
+    # Extracts a list of all places mentioned in the Tweet <tt>text</tt>. If the
+    # <tt>text</tt> is <tt>nil</tt> or contains no username mentions an empty array
+    # will be returned.
+    #
+    # If a block is given then it will be called for each place.
+    def extract_mentioned_places(text, &block) # :yields: place
+      places = extract_mentioned_places_with_indices(text).map{|m| m[:place]}
+      places.each(&block) if block_given?
+      places
+    end
+
+    # Extracts a list of all usernames mentioned in the Tweet <tt>text</tt>
+    # along with the indices for where the mention ocurred.  If the
+    # <tt>text</tt> is nil or contains no username mentions, an empty array
+    # will be returned.
+    #
+    # If a block is given, then it will be called with each username, the start
+    # index, and the end index in the <tt>text</tt>.
+    def extract_mentioned_places_with_indices(text) # :yields: username, start, end
+      return [] unless text =~ /\^/
+
+      place_ids = []
+
+      html_content = Nokogiri::HTML(text).search("span.atwho-inserted")
+      # spans        = Nokogiri::XML(text).search("span")
+      html_content.each do |span|
+        byebug
+        place_ids << {
+          name: span.text,
+          place: place,
+          indices: [1,2]
+        }
+      end
+      text.scan(/\^/) do |before, hat, place_text|
+      end
+      my_array = content.split(/data-factual-id/)
+      (1...my_array.length).to_a.each do |i|
+        place_ids << my_array[i].split(/>/)[0][3..-2]
+      end
+      place_ids << factual_place_id
+
+      text.scan(Twitter::Regex[:valid_place]) do |before, hat, place_text|
+        match_data = $~
+        start_position = match_data.char_begin(2)
+        end_position = match_data.char_end(3)
+        tags << {
+          :place => place_text,
+          :indices => [start_position, end_position]
+        }
+      end
+
+      place_ids.each{|tag| yield tag[:cashtag], tag[:indices].first, tag[:indices].last} if block_given?
+      tags
+    end
   end
+
 end

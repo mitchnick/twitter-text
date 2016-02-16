@@ -109,20 +109,25 @@ end
 
 Rspec::Matchers.define :have_autolinked_place do |place|
   match do |text|
-    byebug
+    # byebug
+    @link = Nokogiri::HTML(text).search("a[@href='/places/find_by_factual?q=#{place}']")
+    @link &&
+    @link.inner_text &&
+    @link.inner_text == place
+    # @link = Nokogiri::HTML(text).search("a[@href='/search?q=#{hashtag.sub(/^#/, '%23')}']")
   end
 
   failure_message_for_should do |text|
     # TODO - Update these
     if @link.first
-      "Expected link text to be [#{hashtag}], but it was [#{@link.inner_text}] in #{text}"
+      "Expected link text to be [#{place}], but it was [#{@link.inner_text}] in #{text}"
     else
-      "Expected hashtag #{hashtag} to be autolinked in '#{text}', but no link was found."
+      "Expected hashtag #{place} to be autolinked in '#{text}', but no link was found."
     end
   end
 
   failure_message_for_should_not do |text|
-    "Expected link '#{@link.inner_text}' with href '#{@link.first['href']}' not to match the hashtag '#{hashtag}', but it does."
+    "Expected link '#{@link.inner_text}' with href '#{@link.first['href']}' not to match the hashtag '#{place}', but it does."
   end
 
 end

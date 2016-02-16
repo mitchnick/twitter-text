@@ -365,4 +365,47 @@ describe Twitter::Extractor do
       match_hashtag_in_text("hashtag", "#{[0x10400].pack('U')} #hashtag", 2)
     end
   end
+
+  describe "places" do
+    let(:place_content) { '<span class="atwho-inserted">^New_York<span class="hidden" data-factual-id="0864a1f4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp;'}
+    context "single place name alone " do
+      xit "should be linked" do
+        # @extractor.extract_mentioned_places(place_content).should == ["0864a1f4-8f76-11e1-848f-cfd5bf3ef515"]
+      end
+
+      it "should be linked with _" do
+        @extractor.extract_mentioned_screen_names("@alice_adams").should == ["alice_adams"]
+      end
+
+      it "should be linked if numeric" do
+        @extractor.extract_mentioned_screen_names("@1234").should == ["1234"]
+      end
+    end
+
+    context "multiple screen names" do
+      it "should both be linked" do
+        @extractor.extract_mentioned_screen_names("@alice @bob").should == ["alice", "bob"]
+      end
+    end
+
+    context "screen names embedded in text" do
+      it "should be linked in Latin text" do
+        @extractor.extract_mentioned_screen_names("waiting for @alice to arrive").should == ["alice"]
+      end
+
+      it "should be linked in Japanese text" do
+        @extractor.extract_mentioned_screen_names("の@aliceに到着を待っている").should == ["alice"]
+      end
+
+      it "should ignore mentions preceded by !, @, #, $, %, & or *" do
+        invalid_chars = ['!', '@', '#', '$', '%', '&', '*']
+        invalid_chars.each do |c|
+          @extractor.extract_mentioned_screen_names("f#{c}@kn").should == []
+        end
+      end
+    end
+  end
+
+  describe "places with indices" do
+  end
 end
