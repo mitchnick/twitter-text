@@ -7,19 +7,23 @@ module Twitter
   # A module for including Tweet auto-linking in a class. The primary use of this is for helpers/views so they can auto-link
   # usernames, lists, hashtags and URLs.
   module Autolink extend self
-    # Default CSS class for auto-linked usernames
+   # Default CSS class for auto-linked usernames
     DEFAULT_USERNAME_CLASS = "username-url".freeze
     # Default CSS class for auto-linked hashtags
-    DEFAULT_HASHTAG_CLASS = "hashtag-url".freeze
+    DEFAULT_HASHTAG_CLASS  = "hashtag-url".freeze
+    # Default CSS class for auto-linked places
+    DEFAULT_PLACE_CLASS    = "place-url".freeze
     # Default CSS class for auto-linked lists
-    DEFAULT_LIST_CLASS = "list-slug".freeze
+    DEFAULT_LIST_CLASS     = "list-slug".freeze
     # Default CSS class for auto-linked cashtags
-    DEFAULT_CASHTAG_CLASS = "tweet-url cashtag".freeze
+    DEFAULT_CASHTAG_CLASS  = "tweet-url cashtag".freeze
 
     # Default URL base for auto-linked usernames
     DEFAULT_USERNAME_URL_BASE = "/".freeze
     # Default URL base for auto-linked hashtags
     DEFAULT_HASHTAG_URL_BASE = "/tags/".freeze
+    # Default URL base for auto-linked places
+    DEFAULT_PLACE_URL_BASE = "/places/find_by_factual?q="
 
     # Default URL base for auto-linked lists
     DEFAULT_LIST_URL_BASE = "https://twitter.com/".freeze
@@ -34,11 +38,13 @@ module Twitter
       :username_class => DEFAULT_USERNAME_CLASS,
       :hashtag_class  => DEFAULT_HASHTAG_CLASS,
       :cashtag_class  => DEFAULT_CASHTAG_CLASS,
+      :place_class    => DEFAULT_PLACE_CLASS,
 
       :username_url_base => DEFAULT_USERNAME_URL_BASE,
       :list_url_base     => DEFAULT_LIST_URL_BASE,
       :hashtag_url_base  => DEFAULT_HASHTAG_URL_BASE,
       :cashtag_url_base  => DEFAULT_CASHTAG_URL_BASE,
+      :place_url_base    => DEFAULT_PLACE_URL_BASE,
 
       :invisible_tag_attrs => DEFAULT_INVISIBLE_TAG_ATTRS
     }.freeze
@@ -68,7 +74,7 @@ module Twitter
       options[:html_attrs][:rel] ||= "nofollow" unless options[:suppress_no_follow]
       options[:html_attrs][:target] = "_blank" if options[:target_blank] == true
 
-      Twitter::Rewriter.rewrite_entities(text.dup, entities) do |entity, chars|
+      return_text = Twitter::Rewriter.rewrite_entities(text.dup, entities) do |entity, chars|
         if entity[:url]
           link_to_url(entity, chars, options, &block)
         elsif entity[:hashtag]
@@ -77,6 +83,8 @@ module Twitter
           link_to_screen_name(entity, chars, options, &block)
         elsif entity[:cashtag]
           link_to_cashtag(entity, chars, options, &block)
+        elsif entity[:place]
+          link_to_place(entity, chars, options, &block)
         end
       end
     end
@@ -212,9 +220,9 @@ module Twitter
 
     # Options which should not be passed as HTML attributes
     OPTIONS_NOT_ATTRIBUTES = Set.new([
-      :url_class, :list_class, :username_class, :hashtag_class, :cashtag_class,
-      :username_url_base, :list_url_base, :hashtag_url_base, :cashtag_url_base,
-      :username_url_block, :list_url_block, :hashtag_url_block, :cashtag_url_block, :link_url_block,
+      :url_class, :list_class, :username_class, :hashtag_class, :cashtag_class, :place_class,
+      :username_url_base, :list_url_base, :hashtag_url_base, :cashtag_url_base, :place_url_base,
+      :username_url_block, :list_url_block, :hashtag_url_block, :cashtag_url_block, :link_url_block, :place_url_block,
       :username_include_symbol, :suppress_lists, :suppress_no_follow, :url_entities,
       :invisible_tag_attrs, :symbol_tag, :text_with_symbol_tag, :url_target, :target_blank,
       :link_attribute_block, :link_text_block
@@ -403,6 +411,27 @@ module Twitter
 
       link_to_text_with_symbol(entity, at, chunk, href, html_attrs, options)
     end
+
+    def link_to_place(entity, chars, options = {})
+      name  = "#{entity[:name]}"
+
+      chunk = name.dup
+      chunk = yield(chunk) if block_given?
+
+      at = chars[entity[:indices].first]
+
+      html_attrs = options[:html_attrs].dup
+
+      href = if options[:username_url_block]
+        options[:username_url_block].call(chunk)
+      else
+        "#{options[:place_url_base]}#{name}"
+      end
+      html_attrs[:class] ||= "#{options[:place_class]}"
+
+      link_to_text_with_symbol(entity, at, chunk, href, html_attrs, options)
+    end
+
 
     def link_to_text_with_symbol(entity, symbol, text, href, attributes = {}, options = {})
       tagged_symbol = options[:symbol_tag] ? "<#{options[:symbol_tag]}>#{symbol}</#{options[:symbol_tag]}>" : symbol

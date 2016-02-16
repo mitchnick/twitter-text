@@ -70,7 +70,8 @@ module Twitter
       entities = extract_urls_with_indices(text, options) +
                  extract_hashtags_with_indices(text, :check_url_overlap => false) +
                  extract_mentions_or_lists_with_indices(text) +
-                 extract_cashtags_with_indices(text)
+                 extract_cashtags_with_indices(text) +
+                 extract_mentioned_places_with_indices(text)
 
       return [] if entities.empty?
 
@@ -347,37 +348,21 @@ module Twitter
       return [] unless text =~ /\^/
 
       place_ids = []
-
       html_content = Nokogiri::HTML(text).search("span.atwho-inserted")
-      # spans        = Nokogiri::XML(text).search("span")
       html_content.each do |span|
-        byebug
+        # byebug
+        length = span.to_html.length
+        start_position = text.index(span.to_s)
+        end_position = start_position + length
+        place_id = span.children[1].attributes["data-factual-id"].text
         place_ids << {
           name: span.text,
-          place: place,
-          indices: [1,2]
-        }
-      end
-      text.scan(/\^/) do |before, hat, place_text|
-      end
-      my_array = content.split(/data-factual-id/)
-      (1...my_array.length).to_a.each do |i|
-        place_ids << my_array[i].split(/>/)[0][3..-2]
-      end
-      place_ids << factual_place_id
-
-      text.scan(Twitter::Regex[:valid_place]) do |before, hat, place_text|
-        match_data = $~
-        start_position = match_data.char_begin(2)
-        end_position = match_data.char_end(3)
-        tags << {
-          :place => place_text,
-          :indices => [start_position, end_position]
-        }
+          place: place_id,
+          indices: [start_position, end_position]
+        } if place_id
       end
 
-      place_ids.each{|tag| yield tag[:cashtag], tag[:indices].first, tag[:indices].last} if block_given?
-      tags
+      place_ids
     end
   end
 

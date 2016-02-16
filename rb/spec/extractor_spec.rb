@@ -366,46 +366,52 @@ describe Twitter::Extractor do
     end
   end
 
-  describe "places" do
+  context "places" do
     let(:place_content) { '<span class="atwho-inserted">^New_York<span class="hidden" data-factual-id="0864a1f4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp;'}
-    context "single place name alone " do
-      xit "should be linked" do
-        # @extractor.extract_mentioned_places(place_content).should == ["0864a1f4-8f76-11e1-848f-cfd5bf3ef515"]
+    let(:multiple_place_content) { '<span class="atwho-inserted">^New_York<span class="hidden" data-factual-id="0864a1f4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp; <span class="atwho-inserted">^United_States<span class="hidden" data-factual-id="08d549a4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp;'}
+    let(:place1_id) { "0864a1f4-8f76-11e1-848f-cfd5bf3ef515" }
+    let(:place2_id) { "08d549a4-8f76-11e1-848f-cfd5bf3ef515" }
+    describe "places" do
+      context "single place name alone " do
+        it "should be linked" do
+          @extractor.extract_mentioned_places(place_content).should == [place1_id]
+        end
       end
 
-      it "should be linked with _" do
-        @extractor.extract_mentioned_screen_names("@alice_adams").should == ["alice_adams"]
+      context "multiple screen names" do
+        it "should both be linked" do
+          @extractor.extract_mentioned_places(multiple_place_content).should == [place1_id, place2_id]
+        end
       end
 
-      it "should be linked if numeric" do
-        @extractor.extract_mentioned_screen_names("@1234").should == ["1234"]
-      end
-    end
-
-    context "multiple screen names" do
-      it "should both be linked" do
-        @extractor.extract_mentioned_screen_names("@alice @bob").should == ["alice", "bob"]
-      end
-    end
-
-    context "screen names embedded in text" do
-      it "should be linked in Latin text" do
-        @extractor.extract_mentioned_screen_names("waiting for @alice to arrive").should == ["alice"]
-      end
-
-      it "should be linked in Japanese text" do
-        @extractor.extract_mentioned_screen_names("の@aliceに到着を待っている").should == ["alice"]
-      end
-
-      it "should ignore mentions preceded by !, @, #, $, %, & or *" do
-        invalid_chars = ['!', '@', '#', '$', '%', '&', '*']
-        invalid_chars.each do |c|
-          @extractor.extract_mentioned_screen_names("f#{c}@kn").should == []
+      context "places embedded in text" do
+        it "should be linked in Latin text" do
+          @extractor.extract_mentioned_places("waiting for #{place_content} to arrive").should == [place1_id]
         end
       end
     end
-  end
 
-  describe "places with indices" do
+    describe "places with indices" do
+
+      context "single screen name alone " do
+        it "should be linked and the correct indices" do
+          @extractor.extract_mentioned_places_with_indices(place_content).should == [{name: "^New_York", place: place1_id, indices: [0, 128]}]
+        end
+      end
+
+      context "multiple screen names" do
+        it "should both be linked with the correct indices" do
+          @extractor.extract_mentioned_places_with_indices(multiple_place_content).should ==
+            [{name: "^New_York", place: place1_id, indices: [0, 128]},
+             {name: "^United_States", place: place2_id, :indices => [135, 268]}]
+        end
+      end
+
+      context "screen names embedded in text" do
+        it "should be linked in Latin text with the correct indices" do
+          @extractor.extract_mentioned_places_with_indices("waiting for #{place_content} to arrive").should == [{name: "^New_York", place: place1_id, indices: [12, 140]}]
+        end
+      end
+    end
   end
 end
