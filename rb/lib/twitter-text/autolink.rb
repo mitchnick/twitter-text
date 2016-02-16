@@ -106,7 +106,6 @@ module Twitter
     # <tt>:link_text_block</tt>::     function to modify the text of a link based on the entity. called with |entity, text| params, and should return a modified text.
     def auto_link(text, options = {}, &block)
       puts "*~" * 88
-      byebug
       auto_link_entities(text, Extractor.extract_entities_with_indices(text, :extract_url_without_protocol => false), options, &block)
     end
 
