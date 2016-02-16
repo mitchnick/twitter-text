@@ -7,21 +7,22 @@ module Twitter
   # A module for including Tweet auto-linking in a class. The primary use of this is for helpers/views so they can auto-link
   # usernames, lists, hashtags and URLs.
   module Autolink extend self
-    # Default CSS class for auto-linked lists
-    DEFAULT_LIST_CLASS = "tweet-url list-slug".freeze
     # Default CSS class for auto-linked usernames
-    DEFAULT_USERNAME_CLASS = "tweet-url username".freeze
+    DEFAULT_USERNAME_CLASS = "username-url".freeze
     # Default CSS class for auto-linked hashtags
-    DEFAULT_HASHTAG_CLASS = "tweet-url hashtag".freeze
+    DEFAULT_HASHTAG_CLASS = "hashtag-url".freeze
+    # Default CSS class for auto-linked lists
+    DEFAULT_LIST_CLASS = "list-slug".freeze
     # Default CSS class for auto-linked cashtags
     DEFAULT_CASHTAG_CLASS = "tweet-url cashtag".freeze
 
     # Default URL base for auto-linked usernames
-    DEFAULT_USERNAME_URL_BASE = "https://twitter.com/".freeze
+    DEFAULT_USERNAME_URL_BASE = "/".freeze
+    # Default URL base for auto-linked hashtags
+    DEFAULT_HASHTAG_URL_BASE = "/tags/".freeze
+
     # Default URL base for auto-linked lists
     DEFAULT_LIST_URL_BASE = "https://twitter.com/".freeze
-    # Default URL base for auto-linked hashtags
-    DEFAULT_HASHTAG_URL_BASE = "https://twitter.com/#!/search?q=%23".freeze
     # Default URL base for auto-linked cashtags
     DEFAULT_CASHTAG_URL_BASE = "https://twitter.com/#!/search?q=%24".freeze
 
@@ -105,7 +106,6 @@ module Twitter
     # <tt>:link_attribute_block</tt>::     function to modify the attributes of a link based on the entity. called with |entity, attributes| params, and should modify the attributes hash.
     # <tt>:link_text_block</tt>::     function to modify the text of a link based on the entity. called with |entity, text| params, and should return a modified text.
     def auto_link(text, options = {}, &block)
-      puts "*~" * 88
       auto_link_entities(text, Extractor.extract_entities_with_indices(text, :extract_url_without_protocol => false), options, &block)
     end
 
