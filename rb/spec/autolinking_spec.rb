@@ -306,7 +306,7 @@ describe Twitter::Autolink do
         it "should be linked" do
           link = Nokogiri::HTML(@autolinked_text).search('a')
           (link.inner_text.respond_to?(:force_encoding) ? link.inner_text.force_encoding("utf-8") : link.inner_text).should == "#{[0xFF03].pack('U')}twj_dev"
-          link.first['href'].should == 'https://twitter.com/#!/search?q=%23twj_dev'
+          link.first['href'].should == '/tags/twj_dev'
         end
       end
 
@@ -317,7 +317,7 @@ describe Twitter::Autolink do
         end
 
         it "should be linked" do
-          @autolinked_text.should == "<a class=\"tweet-url hashtag\" href=\"https://twitter.com/#!/search?q=%23éhashtag\" rel=\"nofollow\" title=\"#éhashtag\">#éhashtag</a>"
+          @autolinked_text.should == "<a class=\"hashtag-url\" href=\"/tags/éhashtag\" rel=\"nofollow\">#éhashtag</a>"
         end
       end
 
@@ -631,8 +631,8 @@ describe Twitter::Autolink do
       linked.should match(/class=\"testClass\"/)
 
       linked = @linker.auto_link("#hash @tw", :url_class => 'testClass')
-      linked.should match(/class=\"tweet-url hashtag\"/)
-      linked.should match(/class=\"tweet-url username\"/)
+      linked.should match(/class=\"hashtag-url\"/)
+      linked.should match(/class=\"username-url\"/)
       linked.should_not match(/class=\"testClass\"/)
     end
 

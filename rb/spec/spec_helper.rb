@@ -11,6 +11,7 @@ $:.push File.join(File.dirname(__FILE__), '..', 'lib')
 require 'nokogiri'
 require 'json'
 require 'simplecov'
+require 'byebug'
 SimpleCov.start do
   add_group 'Libraries', 'lib'
 end
@@ -56,10 +57,10 @@ RSpec::Matchers.define :link_to_screen_name do |screen_name, inner_text|
   expected = inner_text ? inner_text : screen_name
 
   match do |text|
-    @link = Nokogiri::HTML(text).search("a.username")
+    @link = Nokogiri::HTML(text).search("a.#{Twitter::Autolink::DEFAULT_USERNAME_CLASS}")
     @link &&
     @link.inner_text == expected &&
-    "https://twitter.com/#{screen_name}".should == @link.first['href']
+    "/#{screen_name}".should == @link.first['href']
   end
 
   failure_message_for_should do |text|
@@ -108,7 +109,8 @@ end
 
 RSpec::Matchers.define :have_autolinked_hashtag do |hashtag|
   match do |text|
-    @link = Nokogiri::HTML(text).search("a[@href='https://twitter.com/#!/search?q=#{hashtag.sub(/^#/, '%23')}']")
+    # @link = Nokogiri::HTML(text).search("a[@href='https://twitter.com/#!/search?q=#{hashtag.sub(/^#/, '%23')}']")
+    @link = Nokogiri::HTML(text).search("a[@href='/tags/#{hashtag.sub(/^#/, '')}']")
     @link &&
     @link.inner_text &&
     @link.inner_text == hashtag

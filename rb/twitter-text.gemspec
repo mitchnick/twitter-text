@@ -16,12 +16,13 @@ Gem::Specification.new do |s|
   s.summary = "Twitter text handling library"
 
   s.add_development_dependency "multi_json", "~> 1.3"
-  s.add_development_dependency "nokogiri", "~> 1.5.10"
+  s.add_development_dependency "nokogiri", "~> 1.6"
   s.add_development_dependency "rake"
   s.add_development_dependency "rdoc"
   s.add_development_dependency "rspec", "~> 2.14.0"
   s.add_development_dependency "simplecov", "~> 0.8.0"
   s.add_runtime_dependency     "unf", "~> 0.1.0"
+  s.add_development_dependency "byebug" # TODO - Remove
 
   s.files         = `git ls-files`.split("\n") + ['lib/assets/tld_lib.yml']
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
