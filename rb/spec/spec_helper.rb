@@ -107,6 +107,26 @@ RSpec::Matchers.define :link_to_list_path do |list_path, inner_text|
   end
 end
 
+Rspec::Matchers.define :have_autolinked_place do |place|
+  match do |text|
+    byebug
+  end
+
+  failure_message_for_should do |text|
+    # TODO - Update these
+    if @link.first
+      "Expected link text to be [#{hashtag}], but it was [#{@link.inner_text}] in #{text}"
+    else
+      "Expected hashtag #{hashtag} to be autolinked in '#{text}', but no link was found."
+    end
+  end
+
+  failure_message_for_should_not do |text|
+    "Expected link '#{@link.inner_text}' with href '#{@link.first['href']}' not to match the hashtag '#{hashtag}', but it does."
+  end
+
+end
+
 RSpec::Matchers.define :have_autolinked_hashtag do |hashtag|
   match do |text|
     # @link = Nokogiri::HTML(text).search("a[@href='https://twitter.com/#!/search?q=#{hashtag.sub(/^#/, '%23')}']")
