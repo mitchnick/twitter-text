@@ -349,7 +349,7 @@ module Twitter
         :class => hashtag_class,
         # FIXME As our conformance test, hash in title should be half-width,
         # this should be bug of conformance data.
-        :title => "##{hashtag}"
+        # :title => "##{hashtag}"
       }.merge(options[:html_attrs])
 
       link_to_text_with_symbol(entity, hash, hashtag, href, html_attrs, options)
