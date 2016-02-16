@@ -107,14 +107,12 @@ RSpec::Matchers.define :link_to_list_path do |list_path, inner_text|
   end
 end
 
-Rspec::Matchers.define :have_autolinked_place do |place|
+Rspec::Matchers.define :have_autolinked_place do |place, name|
   match do |text|
-    # byebug
     @link = Nokogiri::HTML(text).search("a[@href='/places/find_by_factual?q=#{place}']")
     @link &&
     @link.inner_text &&
-    @link.inner_text == place
-    # @link = Nokogiri::HTML(text).search("a[@href='/search?q=#{hashtag.sub(/^#/, '%23')}']")
+    @link.inner_text == name
   end
 
   failure_message_for_should do |text|

@@ -414,22 +414,24 @@ module Twitter
 
     def link_to_place(entity, chars, options = {})
       name  = "#{entity[:name]}"
-
-      chunk = name.dup
+      place = "#{entity[:place]}"
+      chunk = place.dup
       chunk = yield(chunk) if block_given?
 
-      at = chars[entity[:indices].first]
+      name_chunk = name.dup
+      name_chunk = yield(chunk) if block_given?
+
+      at = ""
 
       html_attrs = options[:html_attrs].dup
 
       href = if options[:username_url_block]
         options[:username_url_block].call(chunk)
       else
-        "#{options[:place_url_base]}#{name}"
+        "#{options[:place_url_base]}#{chunk}"
       end
       html_attrs[:class] ||= "#{options[:place_class]}"
-
-      link_to_text_with_symbol(entity, at, chunk, href, html_attrs, options)
+      link_to_text_with_symbol(entity, at, name_chunk, href, html_attrs, options)
     end
 
 

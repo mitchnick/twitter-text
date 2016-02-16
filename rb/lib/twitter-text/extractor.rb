@@ -350,13 +350,14 @@ module Twitter
       place_ids = []
       html_content = Nokogiri::HTML(text).search("span.atwho-inserted")
       html_content.each do |span|
-        # byebug
         length = span.to_html.length
         start_position = text.index(span.to_s)
         end_position = start_position + length
+        new_name = span.text.tr("_"," ").tr("^","")
+
         place_id = span.children[1].attributes["data-factual-id"].text
         place_ids << {
-          name: span.text,
+          name: new_name,
           place: place_id,
           indices: [start_position, end_position]
         } if place_id

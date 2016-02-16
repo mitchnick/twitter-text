@@ -395,21 +395,21 @@ describe Twitter::Extractor do
 
       context "single screen name alone " do
         it "should be linked and the correct indices" do
-          @extractor.extract_mentioned_places_with_indices(place_content).should == [{name: "^New_York", place: place1_id, indices: [0, 128]}]
+          @extractor.extract_mentioned_places_with_indices(place_content).should == [{name: "New York", place: place1_id, indices: [0, 128]}]
         end
       end
 
       context "multiple screen names" do
         it "should both be linked with the correct indices" do
           @extractor.extract_mentioned_places_with_indices(multiple_place_content).should ==
-            [{name: "^New_York", place: place1_id, indices: [0, 128]},
-             {name: "^United_States", place: place2_id, :indices => [135, 268]}]
+            [{name: "New York",      place: place1_id, indices: [0, 128]},
+             {name: "United States", place: place2_id, indices: [135, 268]}]
         end
       end
 
       context "screen names embedded in text" do
         it "should be linked in Latin text with the correct indices" do
-          @extractor.extract_mentioned_places_with_indices("waiting for #{place_content} to arrive").should == [{name: "^New_York", place: place1_id, indices: [12, 140]}]
+          @extractor.extract_mentioned_places_with_indices("waiting for #{place_content} to arrive").should == [{name: "New York", place: place1_id, indices: [12, 140]}]
         end
       end
     end

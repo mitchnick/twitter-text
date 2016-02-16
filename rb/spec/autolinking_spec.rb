@@ -544,7 +544,7 @@ describe Twitter::Autolink do
         def original_text; "On my search engine #{content} I found good links."; end
 
         it "should be linked" do
-          @autolinked_text.should have_autolinked_place('0864a1f4-8f76-11e1-848f-cfd5bf3ef515')
+          @autolinked_text.should have_autolinked_place('0864a1f4-8f76-11e1-848f-cfd5bf3ef515', 'New York')
         end
       end
     end
