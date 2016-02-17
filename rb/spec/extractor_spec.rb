@@ -182,6 +182,13 @@ describe Twitter::Extractor do
       end
     end
 
+    describe "multiple htmls" do
+      let(:content) { "<p class=\"\">#brilliant</p><p class=\"\">http://www.packers.com/lambeau-field/index.html<br></p><p class=\"\"><a href=\"http://www.packers.com/lambeau-field/index.html\">Lambeau Field Website</a></p>"}
+      it "should extract only one URL" do
+        @extractor.extract_urls(content).count.should eq(1)
+      end
+    end
+
     describe "invalid URLS" do
       it "does not link urls with invalid domains" do
         @extractor.extract_urls("http://tld-too-short.x").should == []

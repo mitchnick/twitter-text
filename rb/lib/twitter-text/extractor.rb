@@ -196,6 +196,7 @@ module Twitter
 
         start_position = valid_url_match_data.char_begin(3)
         end_position = valid_url_match_data.char_end(3)
+        # byebug
         next if start_position_within_html_block?(html_excluded_indices, start_position)
         # If protocol is missing and domain contains non-ASCII characters,
         # extract ASCII-only domains.
@@ -245,6 +246,7 @@ module Twitter
       html_excluded_indices.each do |indices|
         return true if (indices[0] <= start_position && indices[1] >= start_position)
       end
+      return false
     end
 
     # Extracts a list of all hashtags included in the Tweet <tt>text</tt>. If the
