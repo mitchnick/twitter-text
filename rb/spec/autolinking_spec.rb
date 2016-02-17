@@ -334,6 +334,15 @@ describe Twitter::Autolink do
         end
       end
 
+      context "what already in html format" do
+        let(:url) {"<a href=\"http://www.packers.com/lambeau-field/index.html\">Lambeau Field Website</a>"}
+        let(:original_text) { "On my search engine #{url} I found good links." }
+
+        it "should be linked" do
+          @autolinked_text.should == original_text
+        end
+      end
+
       context "when surrounded by Japanese;" do
         def original_text; "いまなにしてる#{url}いまなにしてる"; end
 

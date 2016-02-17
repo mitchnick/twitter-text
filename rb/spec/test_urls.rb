@@ -56,7 +56,9 @@ module TestUrls
     "http://twitt#{[0x202B].pack('U')}er.com",
     "http://twitt#{[0x202C].pack('U')}er.com",
     "http://twitt#{[0x202D].pack('U')}er.com",
-    "http://twitt#{[0x202E].pack('U')}er.com"
+    "http://twitt#{[0x202E].pack('U')}er.com",
+    "<a href=\"http://www.packers.com\">Lambeau Field Website</a>",
+    "<a href='http://www.packers.com'>Lambeau Field Website</a>"
   ] unless defined?(TestUrls::INVALID)
 
   TCO = [

@@ -175,6 +175,13 @@ describe Twitter::Extractor do
       end
     end
 
+    describe "html added urls" do
+      let(:url) {"<a href=\"http://www.packers.com/lambeau-field/index.html\">Lambeau Field Website</a>"}
+      it "should NOT extract the URL" do
+        @extractor.extract_urls(url).count.should eq(0)
+      end
+    end
+
     describe "invalid URLS" do
       it "does not link urls with invalid domains" do
         @extractor.extract_urls("http://tld-too-short.x").should == []

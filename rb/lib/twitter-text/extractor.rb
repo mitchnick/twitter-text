@@ -190,12 +190,13 @@ module Twitter
       return [] unless text && (options[:extract_url_without_protocol] ? text.index(".") : text.index(":"))
       urls = []
 
+      html_excluded_indices = extract_all_html_index_locations(text, "a[href]")
       text.to_s.scan(Twitter::Regex[:valid_url]) do |all, before, url, protocol, domain, port, path, query|
         valid_url_match_data = $~
 
         start_position = valid_url_match_data.char_begin(3)
         end_position = valid_url_match_data.char_end(3)
-
+        next if start_position_within_html_block?(html_excluded_indices, start_position)
         # If protocol is missing and domain contains non-ASCII characters,
         # extract ASCII-only domains.
         if !protocol
@@ -237,6 +238,13 @@ module Twitter
       end
       urls.each{|url| yield url[:url], url[:indices].first, url[:indices].last} if block_given?
       urls
+    end
+
+    def start_position_within_html_block?(html_excluded_indices, start_position)
+      return false if html_excluded_indices.count == 0
+      html_excluded_indices.each do |indices|
+        return true if (indices[0] <= start_position && indices[1] >= start_position)
+      end
     end
 
     # Extracts a list of all hashtags included in the Tweet <tt>text</tt>. If the
@@ -350,20 +358,33 @@ module Twitter
       place_ids = []
       html_content = Nokogiri::HTML(text).search("span.atwho-inserted")
       html_content.each do |span|
-        length = span.to_html.length
-        start_position = text.index(span.to_s)
-        end_position = start_position + length
         new_name = span.text.tr("_"," ").tr("^","")
-
         place_id = span.children[1].attributes["data-factual-id"].text
         place_ids << {
           name: new_name,
           place: place_id,
-          indices: [start_position, end_position]
+          indices: extracted_html_index_locations(text, span),
         } if place_id
       end
 
       place_ids
+    end
+
+    # Helps to find where html was entered to ignore by our matchers
+    def extract_all_html_index_locations(text, matcher)
+      html_content = Nokogiri::HTML(text).search(matcher)
+      all_indices = []
+      html_content.each do |span|
+        all_indices << extracted_html_index_locations(text, span)
+      end
+      all_indices
+    end
+
+    def extracted_html_index_locations(text, span)
+      length = span.to_html.length || 0
+      start_position = text.index(span.to_s) || 0
+      end_position = start_position + length
+      [start_position, end_position]
     end
   end
 
