@@ -687,10 +687,10 @@ describe Twitter::Autolink do
       linked.should_not match(/nofollow/)
     end
 
-    it "should not add a target attribute by default" do
+    it "should add a target attribute by default" do
       linked = @linker.auto_link("http://example.com/")
       linked.should have_autolinked_url('http://example.com/')
-      linked.should_not match(/target=/)
+      linked.should match(/target=/)
     end
 
     it "should respect the :target option" do

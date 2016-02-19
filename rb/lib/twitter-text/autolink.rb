@@ -30,6 +30,9 @@ module Twitter
     # Default URL base for auto-linked cashtags
     DEFAULT_CASHTAG_URL_BASE = "https://twitter.com/#!/search?q=%24".freeze
 
+    # Extrual URLs should go to
+    DEFAULT_TARGET = "_blank"
+
     # Default attributes for invisible span tag
     DEFAULT_INVISIBLE_TAG_ATTRS = "style='position:absolute;left:-9999px;'".freeze
 
@@ -46,7 +49,8 @@ module Twitter
       :cashtag_url_base  => DEFAULT_CASHTAG_URL_BASE,
       :place_url_base    => DEFAULT_PLACE_URL_BASE,
 
-      :invisible_tag_attrs => DEFAULT_INVISIBLE_TAG_ATTRS
+      :default_url_target  => DEFAULT_TARGET,
+      :invisible_tag_attrs => DEFAULT_INVISIBLE_TAG_ATTRS,
     }.freeze
 
     def auto_link_with_json(text, json, options = {})
@@ -224,7 +228,7 @@ module Twitter
       :username_url_base, :list_url_base, :hashtag_url_base, :cashtag_url_base, :place_url_base,
       :username_url_block, :list_url_block, :hashtag_url_block, :cashtag_url_block, :link_url_block, :place_url_block,
       :username_include_symbol, :suppress_lists, :suppress_no_follow, :url_entities,
-      :invisible_tag_attrs, :symbol_tag, :text_with_symbol_tag, :url_target, :target_blank,
+      :invisible_tag_attrs, :symbol_tag, :text_with_symbol_tag, :url_target, :target_blank, :default_url_target,
       :link_attribute_block, :link_text_block
     ]).freeze
 
@@ -263,7 +267,7 @@ module Twitter
       html_attrs[:class] = options[:url_class] if options.key?(:url_class)
 
       # add target attribute only if :url_target is specified
-      html_attrs[:target] = options[:url_target] if options.key?(:url_target)
+      html_attrs[:target] = options[:default_url_target] unless html_attrs.key?(:target)
 
       url_entities = url_entities_hash(options[:url_entities])
 
