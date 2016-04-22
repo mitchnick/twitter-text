@@ -60,7 +60,7 @@ RSpec::Matchers.define :link_to_screen_name do |screen_name, inner_text|
     @link = Nokogiri::HTML(text).search("a.#{Twitter::Autolink::DEFAULT_USERNAME_CLASS}")
     @link &&
     @link.inner_text == expected &&
-    "/#{screen_name}".should == @link.first['href']
+    "#{Twitter::Autolink::DEFAULT_USERNAME_URL_BASE}#{screen_name}".should == @link.first['href']
   end
 
   failure_message_for_should do |text|
