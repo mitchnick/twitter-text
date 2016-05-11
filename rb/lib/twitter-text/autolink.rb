@@ -19,7 +19,7 @@ module Twitter
     DEFAULT_CASHTAG_CLASS  = "tweet-url cashtag".freeze
 
     # Default URL base for auto-linked usernames
-    DEFAULT_USERNAME_URL_BASE = "/u/".freeze
+    DEFAULT_USERNAME_URL_BASE = "/".freeze
     # Default URL base for auto-linked hashtags
     DEFAULT_HASHTAG_URL_BASE = "/tags/".freeze
     # Default URL base for auto-linked places
