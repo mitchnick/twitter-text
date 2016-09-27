@@ -21,7 +21,7 @@ module Twitter
     # Default URL base for auto-linked usernames
     DEFAULT_USERNAME_URL_BASE = "/".freeze
     # Default URL base for auto-linked hashtags
-    DEFAULT_HASHTAG_URL_BASE = "/tags/".freeze
+    DEFAULT_HASHTAG_URL_BASE = "/groups/".freeze
     # Default URL base for auto-linked places
     DEFAULT_PLACE_URL_BASE = "/places/find_by_factual?q="
 

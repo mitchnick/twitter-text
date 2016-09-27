@@ -133,7 +133,7 @@ end
 RSpec::Matchers.define :have_autolinked_hashtag do |hashtag|
   match do |text|
     # @link = Nokogiri::HTML(text).search("a[@href='https://twitter.com/#!/search?q=#{hashtag.sub(/^#/, '%23')}']")
-    @link = Nokogiri::HTML(text).search("a[@href='/tags/#{hashtag.sub(/^#/, '')}']")
+    @link = Nokogiri::HTML(text).search("a[@href='/groups/#{hashtag.sub(/^#/, '')}']")
     @link &&
     @link.inner_text &&
     @link.inner_text == hashtag
