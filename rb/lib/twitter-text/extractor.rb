@@ -355,12 +355,12 @@ module Twitter
     # If a block is given, then it will be called with each username, the start
     # index, and the end index in the <tt>text</tt>.
     def extract_mentioned_places_with_indices(text) # :yields: username, start, end
-      return [] unless text =~ /\^/
+      return [] unless text =~ /\⊙/
 
       place_ids = []
       html_content = Nokogiri::HTML(text).search("span.atwho-inserted")
       html_content.each do |span|
-        new_name = span.text.tr("_"," ").tr("^","")
+        new_name = span.text.tr("_"," ").tr("⊙","")
         place_id = span.children[1].attributes["data-factual-id"].text
         place_ids << {
           name: new_name,
