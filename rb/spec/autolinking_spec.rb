@@ -375,6 +375,16 @@ describe Twitter::Autolink do
         end
       end
 
+      #  **********************************
+      context "when is an image src" do
+        def original_text; "<div class=\"medium-insert-images ui-sortable\"><figure>\r\n    <img src=\"http://tripster-production.s3.amazonaws.com/photos\" alt=\"\" class=\"ui-sortable-handle\" data-photoid=\"338\">\r\n        \r\n</figure></div>"; end
+
+        it "should NOT be linked" do
+          @autolinked_text.should eq(original_text)
+        end
+      end
+      #  **********************************
+
       context "when path contains parens" do
         def original_text; "I found a neatness (#{url})"; end
 

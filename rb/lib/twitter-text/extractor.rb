@@ -47,6 +47,8 @@ module Twitter
   # A module for including Tweet parsing in a class. This module provides function for the extraction and processing
   # of usernames, lists, URLs and hashtags.
   module Extractor extend self
+    IMAGE_DOMAIN = "tripster-production"
+
     # Remove overlapping entities.
     # This returns a new array with no overlapping entities.
     def remove_overlapping_entities(entities)
@@ -196,7 +198,12 @@ module Twitter
 
         start_position = valid_url_match_data.char_begin(3)
         end_position = valid_url_match_data.char_end(3)
-        # byebug
+
+        # ****************************************************
+        # UPDATED - Skip images from amazon
+        next if valid_url_match_data[5] && valid_url_match_data[5].include?(IMAGE_DOMAIN)
+        # ****************************************************
+
         next if start_position_within_html_block?(html_excluded_indices, start_position)
         # If protocol is missing and domain contains non-ASCII characters,
         # extract ASCII-only domains.
