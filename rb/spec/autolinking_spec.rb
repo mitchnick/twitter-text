@@ -568,6 +568,22 @@ describe Twitter::Autolink do
       end
 
     end
+
+    describe "Autolink all custom" do
+      def content
+        '<p class="">Demoing this for Mike:As a hashtag - #surfing</p><p class="">As a user - <span class="atwho-inserted">@mitchnick</span> </p><p class="">As a place - <span class="atwho-inserted">⊙Mitchs_Tavern<span class="hidden" data-factual-id="6530282a-a274-417d-8d60-337dbb6d5ab7"></span></span> </p>'
+      end
+
+      def original_text
+        content
+      end
+
+      it "should be linked" do
+        @autolinked_text.should have_autolinked_hashtag('#surfing')
+        @autolinked_text.should link_to_screen_name('mitchnick')
+        @autolinked_text.should have_autolinked_place('6530282a-a274-417d-8d60-337dbb6d5ab7', 'Mitchs Tavern')
+      end
+    end
     # ********************************************
 
     describe "Autolink all" do
