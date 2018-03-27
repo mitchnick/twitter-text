@@ -362,6 +362,7 @@ module Twitter
     # If a block is given, then it will be called with each username, the start
     # index, and the end index in the <tt>text</tt>.
     def extract_mentioned_places_with_indices(text) # :yields: username, start, end
+      byebug
       return [] unless text =~ /\⊙/
 
       place_ids = []
