@@ -23,7 +23,7 @@ module Twitter
     # Default URL base for auto-linked hashtags
     DEFAULT_HASHTAG_URL_BASE = "/groups/".freeze
     # Default URL base for auto-linked places
-    DEFAULT_PLACE_URL_BASE = "/places/find_by_factual?q="
+    DEFAULT_PLACE_URL_BASE = "/places/find_by_facebook?q="
 
     # Default URL base for auto-linked lists
     DEFAULT_LIST_URL_BASE = "https://twitter.com/".freeze

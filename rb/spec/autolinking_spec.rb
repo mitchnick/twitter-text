@@ -553,10 +553,10 @@ describe Twitter::Autolink do
     # ********************************************
     describe "PLACE autolinking" do
       def content
-        "<span class=\"atwho-inserted\">⊙New_York<span class=\"hidden\" data-factual-id=\"0864a1f4-8f76-11e1-848f-cfd5bf3ef515\"></span></span>&nbsp;"
+        "<span class=\"atwho-inserted\">⊙New_York<span class=\"hidden\" data-facebook-id=\"0864a1f4-8f76-11e1-848f-cfd5bf3ef515\"></span></span>&nbsp;"
       end
       def multiple_content
-       'Foo <span class="atwho-inserted">⊙New_York<span class="hidden" data-factual-id="0864a1f4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp; bar <span class="atwho-inserted">⊙United_States<span class="hidden" data-factual-id="08d549a4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp;'
+       'Foo <span class="atwho-inserted">⊙New_York<span class="hidden" data-facebook-id="0864a1f4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp; bar <span class="atwho-inserted">⊙United_States<span class="hidden" data-facebook-id="08d549a4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp;'
       end
 
       context "when embedded in plain text" do
@@ -571,7 +571,7 @@ describe Twitter::Autolink do
 
     describe "Autolink all custom" do
       def content
-        '<p class="">Demoing this for Mike:As a hashtag - #surfing</p><p class="">As a user - <span class="atwho-inserted">@mitchnick</span> </p><p class="">As a place - <span class="atwho-inserted">⊙Mitchs_Tavern<span class="hidden" data-factual-id="6530282a-a274-417d-8d60-337dbb6d5ab7"></span></span> </p>'
+        '<p class="">Demoing this for Mike:As a hashtag - #surfing</p><p class="">As a user - <span class="atwho-inserted">@mitchnick</span> </p><p class="">As a place - <span class="atwho-inserted">⊙Mitchs_Tavern<span class="hidden" data-facebook-id="6530282a-a274-417d-8d60-337dbb6d5ab7"></span></span> </p>'
       end
 
       def original_text

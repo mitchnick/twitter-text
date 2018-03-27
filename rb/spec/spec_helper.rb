@@ -109,7 +109,7 @@ end
 
 Rspec::Matchers.define :have_autolinked_place do |place, name|
   match do |text|
-    @link = Nokogiri::HTML(text).search("a[@href='/places/find_by_factual?q=#{place}']")
+    @link = Nokogiri::HTML(text).search("a[@href='/places/find_by_facebook?q=#{place}']")
     @link &&
     @link.inner_text &&
     @link.inner_text == name
