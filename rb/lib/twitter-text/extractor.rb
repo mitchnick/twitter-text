@@ -362,7 +362,6 @@ module Twitter
     # If a block is given, then it will be called with each username, the start
     # index, and the end index in the <tt>text</tt>.
     def extract_mentioned_places_with_indices(text) # :yields: username, start, end
-      byebug
       return [] unless text =~ /\⊙/
 
       place_ids = []
@@ -370,8 +369,8 @@ module Twitter
       html_content.each do |span|
         new_name = span.text.tr("_"," ").tr("⊙","")
         place_content = span.children[1] ? span.children[1] : span.children[0]
-        next unless place_content.attributes["data-facebook-id"]
-        place_id = place_content.attributes["data-facebook-id"].text
+        next unless place_content.attributes["data-factual-id"]
+        place_id = place_content.attributes["data-factual-id"].text
         place_ids << {
           name: new_name,
           place: place_id,
