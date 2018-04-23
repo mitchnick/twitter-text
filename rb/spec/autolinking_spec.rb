@@ -305,7 +305,7 @@ describe Twitter::Autolink do
 
         it "should be linked" do
           link = Nokogiri::HTML(@autolinked_text).search('a')
-          (link.inner_text.respond_to?(:force_encoding) ? link.inner_text.force_encoding("utf-8") : link.inner_text).should == "#{[0xFF03].pack('U')}twj_dev"
+          (link.inner_text.respond_to?(:force_encoding) ? link.inner_text.force_encoding("utf-8") : link.inner_text).should == "twj_dev"
           link.first['href'].should == '/groups/twj_dev'
         end
       end
@@ -317,7 +317,7 @@ describe Twitter::Autolink do
         end
 
         it "should be linked" do
-          @autolinked_text.should == "<a class=\"hashtag-url\" href=\"/groups/éhashtag\" rel=\"nofollow\">#éhashtag</a>"
+          @autolinked_text.should == "<a class=\"hashtag-url\" href=\"/groups/éhashtag\" rel=\"nofollow\">éhashtag</a>"
         end
       end
 
@@ -707,6 +707,12 @@ describe Twitter::Autolink do
       linked.should link_to_list_path('user/list', '@user/list')
     end
 
+    it "should not include the '#' symbol in a tag" do
+      linked = @linker.auto_link("#special", :hashtag_include_symbol => true)
+      linked.should have_autolinked_hashtag('#special')
+      expect(linked).to eq('<a class="hashtag-url" hashtag_include_symbol="true" href="/groups/special" rel="nofollow">special</a>')
+    end
+
     it "should not add rel=nofollow when passed :suppress_no_follow" do
       linked = @linker.auto_link("http://example.com/", :suppress_no_follow => true)
       linked.should have_autolinked_url('http://example.com/')
@@ -737,7 +743,7 @@ describe Twitter::Autolink do
 
     it "should customize href by hashtag_url_block option" do
       linked = @linker.auto_link("#hashtag", :hashtag_url_block => lambda{|a| "dummy"})
-      linked.should have_autolinked_url('dummy', '#hashtag')
+      linked.should have_autolinked_url('dummy', 'hashtag')
     end
 
     it "should customize href by cashtag_url_block option" do
@@ -784,7 +790,7 @@ describe Twitter::Autolink do
         },
         :symbol_tag => "s", :text_with_symbol_tag => "b", :username_include_symbol => true
       })
-      linked.should match(/<a[^>]+>pre_<s>#<\/s><b>hash<\/b>_post<\/a>/)
+      linked.should match(/<a[^>]+>pre_<b>hash<\/b>_post<\/a>/)
       linked.should match(/<a[^>]+>pre_<s>@<\/s><b>mention<\/b>_post<\/a>/)
     end
 
@@ -857,10 +863,10 @@ describe Twitter::Autolink do
     end
     it "should put :symbol_tag around symbol" do
       @linker.auto_link("@mention", {:symbol_tag => 's', :username_include_symbol=>true}).should match(/<s>@<\/s>mention/)
-      @linker.auto_link("#hash", {:symbol_tag => 's'}).should match(/<s>#<\/s>hash/)
+      @linker.auto_link("hash", {:symbol_tag => 's'}).should match(/hash/)
       result = @linker.auto_link("@mention #hash $CASH", {:symbol_tag => 'b', :username_include_symbol=>true})
       result.should match(/<b>@<\/b>mention/)
-      result.should match(/<b>#<\/b>hash/)
+      result.should match(/hash/)
       result.should match(/<b>\$<\/b>CASH/)
     end
     it "should put :text_with_symbol_tag around text" do
@@ -871,8 +877,12 @@ describe Twitter::Autolink do
     end
     it "should put :symbol_tag around symbol and :text_with_symbol_tag around text" do
       result = @linker.auto_link("@mention #hash $CASH", {:symbol_tag => 's', :text_with_symbol_tag => 'b', :username_include_symbol=>true})
+      puts "*" * 99
+      puts result
+      puts "*" * 99
       result.should match(/<s>@<\/s><b>mention<\/b>/)
-      result.should match(/<s>#<\/s><b>hash<\/b>/)
+      # result.should match(/<s>#<\/s><b>hash<\/b>/)
+      result.should match(/<b>hash<\/b>/)
       result.should match(/<s>\$<\/s><b>CASH<\/b>/)
     end
   end

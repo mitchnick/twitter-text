@@ -442,9 +442,22 @@ module Twitter
       tagged_symbol = options[:symbol_tag] ? "<#{options[:symbol_tag]}>#{symbol}</#{options[:symbol_tag]}>" : symbol
       text = html_escape(text)
       tagged_text = options[:text_with_symbol_tag] ? "<#{options[:text_with_symbol_tag]}>#{text}</#{options[:text_with_symbol_tag]}>" : text
-      if options[:username_include_symbol] || symbol !~ Twitter::Regex::REGEXEN[:at_signs]
+      # puts "*" * 99
+      # puts entity
+      # puts symbol !~ Twitter::Regex::REGEXEN[:valid_hashtag]
+      # puts Twitter::Validation.valid_hashtag?(text)
+      # puts "*" * 99
+      if entity.fetch(:hashtag, false)
+        "#{link_to_text(entity, tagged_text, href, attributes, options)}"
+      elsif (options[:username_include_symbol] || symbol !~ Twitter::Regex::REGEXEN[:at_signs])
+        # puts "*" * 99
+        # puts 1
+        # puts "*" * 99
         "#{link_to_text(entity, tagged_symbol + tagged_text, href, attributes, options)}"
       else
+        # puts "*" * 99
+        # puts 2
+        # puts "*" * 99
         "#{tagged_symbol}#{link_to_text(entity, tagged_text, href, attributes, options)}"
       end
     end

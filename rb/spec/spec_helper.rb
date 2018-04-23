@@ -136,7 +136,9 @@ RSpec::Matchers.define :have_autolinked_hashtag do |hashtag|
     @link = Nokogiri::HTML(text).search("a[@href='/groups/#{hashtag.sub(/^#/, '')}']")
     @link &&
     @link.inner_text &&
-    @link.inner_text == hashtag
+    # NOTE: Used to check to see if hashtag was included in the return
+    # @link.inner_text == hashtag
+    @link.inner_text == hashtag.gsub("#", "")
   end
 
   failure_message_for_should do |text|
