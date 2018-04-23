@@ -367,7 +367,9 @@ module Twitter
       place_ids = []
       html_content = Nokogiri::HTML(text).search("span.atwho-inserted")
       html_content.each do |span|
-        new_name = span.text.tr("_"," ").tr("⊙","")
+        text_node = span.children.detect{|child| child.attr('class') && child.attr('class').include?("place-inserted")}
+        new_name = text_node ? text_node.text.tr("_"," ").tr("⊙","") : ""
+        # new_name = span.text.tr("_"," ").tr("⊙","")
         place_content = span.children[1] ? span.children[1] : span.children[0]
         next unless place_content.attributes["data-facebook-id"]
         place_id = place_content.attributes["data-facebook-id"].text

@@ -381,10 +381,10 @@ describe Twitter::Extractor do
   end
 
   context "places" do
-    let(:place_content) { '<span class="atwho-inserted">⊙New_York<span class="hidden" data-facebook-id="0864a1f4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp;'}
-    let(:multiple_place_content) { '<span class="atwho-inserted">⊙New_York<span class="hidden" data-facebook-id="0864a1f4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp; <span class="atwho-inserted">⊙United_States<span class="hidden" data-facebook-id="08d549a4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp;'}
-    let(:place1_id) { "0864a1f4-8f76-11e1-848f-cfd5bf3ef515" }
-    let(:place2_id) { "08d549a4-8f76-11e1-848f-cfd5bf3ef515" }
+    let(:place_content) { '<span class="atwho-inserted"><span class="place-inserted">⊙New_York</span><span class="hidden" data-facebook-id="fb112463092102121"></span><span class="place-inserted-form">New_York</span></span>' }
+    let(:multiple_place_content) { '<span class="atwho-inserted"><span class="place-inserted">⊙New_York</span><span class="hidden" data-facebook-id="fb112463092102121"></span><span class="place-inserted-form">New_York</span></span>&nbsp; <span class="atwho-inserted"><span class="place-inserted">⊙United_States</span><span class="hidden" data-facebook-id="fb112463092102121"></span><span class="place-inserted-form">United_States</span></span>&nbsp;'}
+    let(:place1_id) { "fb112463092102121" }
+    let(:place2_id) { "fb112463092102121" }
     describe "places" do
       context "single place name alone " do
         it "should be linked" do
@@ -409,21 +409,21 @@ describe Twitter::Extractor do
 
       context "single screen name alone " do
         it "should be linked and the correct indices" do
-          @extractor.extract_mentioned_places_with_indices(place_content).should == [{name: "New York", place: place1_id, indices: [0, 129]}]
+          @extractor.extract_mentioned_places_with_indices(place_content).should == [{name: "New York", place: place1_id, indices: [0, 195]}]
         end
       end
 
       context "multiple screen names" do
         it "should both be linked with the correct indices" do
           @extractor.extract_mentioned_places_with_indices(multiple_place_content).should ==
-            [{name: "New York",      place: place1_id, indices: [0, 129]},
-             {name: "United States", place: place2_id, indices: [136, 270]}]
+            [{name: "New York",      place: place1_id, indices: [0, 195]},
+             {name: "United States", place: place2_id, indices: [202, 407]}]
         end
       end
 
       context "screen names embedded in text" do
         it "should be linked in Latin text with the correct indices" do
-          @extractor.extract_mentioned_places_with_indices("waiting for #{place_content} to arrive").should == [{name: "New York", place: place1_id, indices: [12, 141]}]
+          @extractor.extract_mentioned_places_with_indices("waiting for #{place_content} to arrive").should == [{name: "New York", place: place1_id, indices: [12, 207]}]
         end
       end
     end

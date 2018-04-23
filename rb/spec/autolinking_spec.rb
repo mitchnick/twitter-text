@@ -553,17 +553,14 @@ describe Twitter::Autolink do
     # ********************************************
     describe "PLACE autolinking" do
       def content
-        "<span class=\"atwho-inserted\">⊙New_York<span class=\"hidden\" data-facebook-id=\"0864a1f4-8f76-11e1-848f-cfd5bf3ef515\"></span></span>&nbsp;"
-      end
-      def multiple_content
-       'Foo <span class="atwho-inserted">⊙New_York<span class="hidden" data-facebook-id="0864a1f4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp; bar <span class="atwho-inserted">⊙United_States<span class="hidden" data-facebook-id="08d549a4-8f76-11e1-848f-cfd5bf3ef515"></span></span>&nbsp;'
+        '<span class="atwho-inserted"><span class="place-inserted">⊙New_York</span><span class="hidden" data-facebook-id="fb112463092102121"></span><span class="place-inserted-form">New_York</span></span>'
       end
 
       context "when embedded in plain text" do
         def original_text; "On my search engine #{content} I found good links."; end
 
         it "should be linked" do
-          @autolinked_text.should have_autolinked_place('0864a1f4-8f76-11e1-848f-cfd5bf3ef515', 'New York')
+          @autolinked_text.should have_autolinked_place('fb112463092102121', 'New York')
         end
       end
 
@@ -571,7 +568,7 @@ describe Twitter::Autolink do
 
     describe "Autolink all custom" do
       def content
-        '<p class="">Demoing this for Mike:As a hashtag - #surfing</p><p class="">As a user - <span class="atwho-inserted">@mitchnick</span> </p><p class="">As a place - <span class="atwho-inserted">⊙Mitchs_Tavern<span class="hidden" data-facebook-id="6530282a-a274-417d-8d60-337dbb6d5ab7"></span></span> </p>'
+        '<p class="">Demoing this for Mike:As a hashtag - #surfing</p><p class="">As a user - <span class="atwho-inserted">@mitchnick</span> </p><p class="">As a place - <span class="atwho-inserted"><span class="place-inserted">⊙Mitchs_Tavern</span><span class="hidden" data-facebook-id="fb112463092102121"></span><span class="place-inserted-form">New_York</span></span> </p>'
       end
 
       def original_text
@@ -581,7 +578,7 @@ describe Twitter::Autolink do
       it "should be linked" do
         @autolinked_text.should have_autolinked_hashtag('#surfing')
         @autolinked_text.should link_to_screen_name('mitchnick')
-        @autolinked_text.should have_autolinked_place('6530282a-a274-417d-8d60-337dbb6d5ab7', 'Mitchs Tavern')
+        @autolinked_text.should have_autolinked_place('fb112463092102121', 'Mitchs Tavern')
       end
     end
     # ********************************************
