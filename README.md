@@ -1,6 +1,7 @@
 ==============
 
-Adding a new character ^ to add autolinking to. Updating the paths for # and @ to match how we use in our application.
+Adding a new character ^ to add autolinking to.
+Updating the paths for # and @ to match how we use in our application.
 
 ==============
 
