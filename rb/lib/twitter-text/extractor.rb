@@ -47,7 +47,7 @@ module Twitter
   # A module for including Tweet parsing in a class. This module provides function for the extraction and processing
   # of usernames, lists, URLs and hashtags.
   module Extractor extend self
-    IMAGE_DOMAIN = "tripster-production"
+    IMAGE_DOMAIN = "tripsio-production".freeze
 
     # Remove overlapping entities.
     # This returns a new array with no overlapping entities.
@@ -201,7 +201,7 @@ module Twitter
 
         # ****************************************************
         # UPDATED - Skip images from amazon
-        next if valid_url_match_data[5] && valid_url_match_data[5].include?(IMAGE_DOMAIN)
+        next if url && url.include?(IMAGE_DOMAIN)
         # ****************************************************
 
         next if start_position_within_html_block?(html_excluded_indices, start_position)

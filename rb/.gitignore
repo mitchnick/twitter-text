@@ -17,6 +17,7 @@
 .emacs.desktop.lock
 .redcar
 .yardoc
+.byebug-history
 Desktop.ini
 Gemfile.lock
 Icon?

@@ -377,10 +377,19 @@ describe Twitter::Autolink do
 
       #  **********************************
       context "when is an image src" do
-        def original_text; "<div class=\"medium-insert-images ui-sortable\"><figure>\r\n    <img src=\"http://tripster-production.s3.amazonaws.com/photos\" alt=\"\" class=\"ui-sortable-handle\" data-photoid=\"338\">\r\n        \r\n</figure></div>"; end
+        context "http" do
+          def original_text; "<div class=\"medium-insert-images ui-sortable\"><figure>\r\n    <img src=\"http://tripsio-production.s3.amazonaws.com/photos\" alt=\"\" class=\"ui-sortable-handle\" data-photoid=\"338\">\r\n        \r\n</figure></div>"; end
 
-        it "should NOT be linked" do
-          @autolinked_text.should eq(original_text)
+          it "should NOT be linked" do
+            @autolinked_text.should eq(original_text)
+          end
+        end
+        context "https" do
+          def original_text; "<p>Testing the images:</p><div class=\"medium-insert-images ui-sortable\"><figure>\r\n    <img src=\"https://s3.us-east-1.amazonaws.com/tripsio-production/photos/images/000/000/003/large/IMG_7705.jpg\" alt=\"\" class=\"ui-sortable-handle\" data-photoid=\"3\">\r\n        \r\n</figure></div>"; end
+
+          it "should NOT be linked" do
+            @autolinked_text.should eq(original_text)
+          end
         end
       end
       #  **********************************
