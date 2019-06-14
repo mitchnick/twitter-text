@@ -404,12 +404,14 @@ module Twitter
         end
         html_attrs[:class] ||= "#{options[:list_class]}"
       else
-        # href = if options[:username_url_block]
-        #   options[:username_url_block].call(chunk)
-        # else
-        #   "#{options[:username_url_base]}#{name}"
-        # end
-        href = ::User.username_link(name)
+        href = if ::User.respond_to? :username_link
+                 ::User.username_link(name)
+               elsif options[:username_url_block]
+                 options[:username_url_block].call(chunk)
+               else
+                 "#{options[:username_url_base]}#{name}"
+               end
+
         html_attrs[:class] ||= "#{options[:username_class]}"
       end
 
