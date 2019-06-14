@@ -396,7 +396,6 @@ module Twitter
 
       html_attrs = options[:html_attrs].dup
 
-      byebug
       if entity[:list_slug] && !entity[:list_slug].empty? && !options[:suppress_lists]
         href = if options[:list_url_block]
           options[:list_url_block].call(name)
@@ -405,11 +404,12 @@ module Twitter
         end
         html_attrs[:class] ||= "#{options[:list_class]}"
       else
-        href = if options[:username_url_block]
-          options[:username_url_block].call(chunk)
-        else
-          "#{options[:username_url_base]}#{name}"
-        end
+        # href = if options[:username_url_block]
+        #   options[:username_url_block].call(chunk)
+        # else
+        #   "#{options[:username_url_base]}#{name}"
+        # end
+        href = ::User.username_link(name)
         html_attrs[:class] ||= "#{options[:username_class]}"
       end
 
