@@ -428,7 +428,7 @@ module Twitter
 
       html_attrs = options[:html_attrs].dup
 
-      href = if options[:username_url_block]
+      href = if options[:place_url_block]
         options[:username_url_block].call(chunk)
       else
         "#{options[:place_url_base]}#{chunk}"
