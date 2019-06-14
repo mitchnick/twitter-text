@@ -396,6 +396,7 @@ module Twitter
 
       html_attrs = options[:html_attrs].dup
 
+      byebug
       if entity[:list_slug] && !entity[:list_slug].empty? && !options[:suppress_lists]
         href = if options[:list_url_block]
           options[:list_url_block].call(name)
