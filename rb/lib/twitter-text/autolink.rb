@@ -451,7 +451,7 @@ module Twitter
       text = chars[entity[:indices][0]..entity[:indices][1]].join().rstrip
       begin
         record = quote_type.constantize&.find(quote_id)
-        by = "<span class='quoted-user'>record.user.username</span>"
+        by = "<span class='quoted-user'>#{record.user.username}</span>"
         "<a href=\"#quoted-#{quote_id}-#{quote_type}\" data-turbolinks=\"false\">#{text} #{by}</a>"
       rescue
         "<a href=\"#quoted-#{quote_id}-#{quote_type}\">#{text}</a>"
