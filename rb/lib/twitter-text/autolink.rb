@@ -451,14 +451,9 @@ module Twitter
       text = chars[entity[:indices][0]..entity[:indices][1]].join().rstrip
       begin
         record = quote_type.constantize&.find(quote_id)
-        puts "*" * 99
-        puts "FOUND A RECORD!"
-        puts "*" * 99
-        "<a href=\"#quoted-#{quote_id}-#{quote_type}\">#{text}</a>"
+        by = "<span class='quoted-user'>record.user.username</span>"
+        "<a href=\"#quoted-#{quote_id}-#{quote_type}\" data-turbolinks=\"false\">#{text} #{by}</a>"
       rescue
-        puts "*" * 99
-        puts "RESCUING"
-        puts "*" * 99
         "<a href=\"#quoted-#{quote_id}-#{quote_type}\">#{text}</a>"
       end
     end

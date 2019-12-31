@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = "twitter-text"
-  s.version = "1.13.9"
+  s.version = "1.13.10"
   s.authors = ["Matt Sanford", "Patrick Ewing", "Ben Cherry", "Britt Selvitelle",
                "Raffi Krikorian", "J.P. Cummins", "Yoshimasa Niwa", "Keita Fujii", "James Koval"]
   s.email = ["matt@twitter.com", "patrick.henry.ewing@gmail.com", "bcherry@gmail.com", "bs@brittspace.com",
@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.license = "Apache 2.0"
 
   s.platform = Gem::Platform::RUBY
-  s.has_rdoc = true
+  # s.has_rdoc = true
   s.summary = "Twitter text handling library"
 
   s.add_development_dependency "multi_json", "~> 1.3"

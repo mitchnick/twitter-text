@@ -584,7 +584,7 @@ describe Twitter::Autolink do
 
         it "should be linked" do
           # @autolinked_text.should have_autolinked_quote('5', 'My quoted text')
-          @autolinked_text.should eq('<a href="#quoted-5-TopicPost"><span class="quoted" data-quoted="5-TopicPost">My quoted text</span></a> Other thoughts on the text')
+          @autolinked_text.should eq('<a href="#quoted-5-TopicPost" data-turbolinks="false"><span class="quoted" data-quoted="5-TopicPost">My quoted text</span></a> Other thoughts on the text')
         end
       end
     end
