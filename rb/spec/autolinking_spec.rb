@@ -572,7 +572,21 @@ describe Twitter::Autolink do
           @autolinked_text.should have_autolinked_place('fb112463092102121', 'New York')
         end
       end
+    end
 
+    describe "QUOTE autolinking" do
+      def content
+        '<span class="quoted" data-quoted="5-TopicPost">My quoted text</span>'
+      end
+
+      context "when embedded in plain text" do
+        def original_text; "#{content} Other thoughts on the text"; end
+
+        it "should be linked" do
+          # @autolinked_text.should have_autolinked_quote('5', 'My quoted text')
+          @autolinked_text.should eq('<a href="#quoted-5-TopicPost"><span class="quoted" data-quoted="5-TopicPost">My quoted text</span></a> Other thoughts on the text')
+        end
+      end
     end
 
     describe "Autolink all custom" do
@@ -883,9 +897,6 @@ describe Twitter::Autolink do
     end
     it "should put :symbol_tag around symbol and :text_with_symbol_tag around text" do
       result = @linker.auto_link("@mention #hash $CASH", {:symbol_tag => 's', :text_with_symbol_tag => 'b', :username_include_symbol=>true})
-      puts "*" * 99
-      puts result
-      puts "*" * 99
       result.should match(/<s>@<\/s><b>mention<\/b>/)
       # result.should match(/<s>#<\/s><b>hash<\/b>/)
       result.should match(/<b>hash<\/b>/)

@@ -73,7 +73,8 @@ module Twitter
                  extract_hashtags_with_indices(text, :check_url_overlap => false) +
                  extract_mentions_or_lists_with_indices(text) +
                  extract_cashtags_with_indices(text) +
-                 extract_mentioned_places_with_indices(text)
+                 extract_mentioned_places_with_indices(text) +
+                 extract_mentioned_quotes_with_indices(text)
 
       return [] if entities.empty?
 
@@ -354,7 +355,7 @@ module Twitter
       places
     end
 
-    # Extracts a list of all usernames mentioned in the Tweet <tt>text</tt>
+    # Extracts a list of all places mentioned in the Tweet <tt>text</tt>
     # along with the indices for where the mention ocurred.  If the
     # <tt>text</tt> is nil or contains no username mentions, an empty array
     # will be returned.
@@ -381,6 +382,42 @@ module Twitter
       end
 
       place_ids
+    end
+
+    # Extracts a list of all quotes mentioned in the Tweet <tt>text</tt>. If the
+    # <tt>text</tt> is <tt>nil</tt> or contains no quote mentions an empty array
+    # will be returned.
+    #
+    # If a block is given then it will be called for each quote.
+    def extract_mentioned_quotes(text, &block) # :yields: place
+      quotes = extract_mentioned_quotes_with_indices(text).map{|m| m[:quote_id]}
+      quotes.each(&block) if block_given?
+      quotes
+    end
+
+    # Extracts a list of all quotes mentioned in the Tweet <tt>text</tt>
+    # along with the indices for where the mention ocurred.  If the
+    # <tt>text</tt> is nil or contains no quote mentions, an empty array
+    # will be returned.
+    #
+    # If a block is given, then it will be called with each username, the start
+    # index, and the end index in the <tt>text</tt>.
+    def extract_mentioned_quotes_with_indices(text) # :yields: username, start, end
+      return [] unless text =~ /data-quoted/
+
+      quoted_ids = []
+      html_content = Nokogiri::HTML(text).search("span.quoted")
+      html_content.each do |span|
+        next unless span.attributes["data-quoted"]
+        quote_id, quote_type = span.attributes["data-quoted"].text.split("-")
+        quoted_ids << {
+          quote_id: quote_id,
+          quote_type: quote_type,
+          indices: extracted_html_index_locations(text, span),
+        } if quote_id
+      end
+
+      quoted_ids
     end
 
     # Helps to find where html was entered to ignore by our matchers

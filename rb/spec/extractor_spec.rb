@@ -385,14 +385,15 @@ describe Twitter::Extractor do
     let(:multiple_place_content) { '<span class="atwho-inserted"><span class="place-inserted">⊙New_York</span><span class="hidden" data-facebook-id="fb112463092102121"></span><span class="place-inserted-form">New_York</span></span>&nbsp; <span class="atwho-inserted"><span class="place-inserted">⊙United_States</span><span class="hidden" data-facebook-id="fb112463092102121"></span><span class="place-inserted-form">United_States</span></span>&nbsp;'}
     let(:place1_id) { "fb112463092102121" }
     let(:place2_id) { "fb112463092102121" }
-    describe "places" do
+
+    describe "extract_mentioned_places" do
       context "single place name alone " do
         it "should be linked" do
           @extractor.extract_mentioned_places(place_content).should == [place1_id]
         end
       end
 
-      context "multiple screen names" do
+      context "multiple places" do
         it "should both be linked" do
           @extractor.extract_mentioned_places(multiple_place_content).should == [place1_id, place2_id]
         end
@@ -405,15 +406,14 @@ describe Twitter::Extractor do
       end
     end
 
-    describe "places with indices" do
-
-      context "single screen name alone " do
+    describe "extract_mentioned_places_with_indices" do
+      context "single place alone " do
         it "should be linked and the correct indices" do
           @extractor.extract_mentioned_places_with_indices(place_content).should == [{name: "New York", place: place1_id, indices: [0, 195]}]
         end
       end
 
-      context "multiple screen names" do
+      context "multiple places" do
         it "should both be linked with the correct indices" do
           @extractor.extract_mentioned_places_with_indices(multiple_place_content).should ==
             [{name: "New York",      place: place1_id, indices: [0, 195]},
@@ -421,9 +421,58 @@ describe Twitter::Extractor do
         end
       end
 
-      context "screen names embedded in text" do
+      context "places embedded in text" do
         it "should be linked in Latin text with the correct indices" do
           @extractor.extract_mentioned_places_with_indices("waiting for #{place_content} to arrive").should == [{name: "New York", place: place1_id, indices: [12, 207]}]
+        end
+      end
+    end
+  end
+
+  context "quotes" do
+    let(:quote_content) { '<span class="quoted" data-quoted="5-TopicPost">My quoted text</span> Other thoughts on the text' }
+    let(:multiple_quote_content) { '<span class="quoted" data-quoted="5-TopicPost">My quoted text</span> Other thoughts on the text. <span class="quoted" data-quoted="9-TopicPost">My second quoted text</span> this is good as well!'}
+
+    describe "extract_mentioned_quotes" do
+      context "single quote alone " do
+        it "should be linked" do
+          @extractor.extract_mentioned_quotes(quote_content).should == ["5"]
+        end
+      end
+
+      context "multiple quotes" do
+        it "should both be linked" do
+          @extractor.extract_mentioned_quotes(multiple_quote_content).should == ['5', '9']
+        end
+      end
+
+      context "quotes embedded in text" do
+        it "should be linked in Latin text" do
+          @extractor.extract_mentioned_quotes("waiting for #{quote_content} to arrive").should == ['5']
+        end
+      end
+    end
+
+    describe "extract_mentioned_quotes_with_indices" do
+      context "single quote alone " do
+        it "should be linked and the correct indices" do
+          @extractor.extract_mentioned_quotes_with_indices(quote_content).should ==
+            [{quote_id: "5", quote_type: "TopicPost", indices: [0, 68]}]
+        end
+      end
+
+      context "multiple quotes" do
+        it "should both be linked with the correct indices" do
+          @extractor.extract_mentioned_quotes_with_indices(multiple_quote_content).should ==
+            [{quote_id: "5", quote_type: "TopicPost", indices: [0, 68]},
+             {quote_id: "9", quote_type: "TopicPost", indices: [97, 172]}]
+        end
+      end
+
+      context "quotes embedded in text" do
+        it "should be linked in Latin text with the correct indices" do
+          @extractor.extract_mentioned_quotes_with_indices("waiting for #{quote_content} to arrive").should ==
+            [{quote_id: "5", quote_type: "TopicPost", indices: [12, 80]}]
         end
       end
     end

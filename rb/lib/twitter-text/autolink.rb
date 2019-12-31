@@ -17,6 +17,8 @@ module Twitter
     DEFAULT_LIST_CLASS     = "list-slug".freeze
     # Default CSS class for auto-linked cashtags
     DEFAULT_CASHTAG_CLASS  = "tweet-url cashtag".freeze
+    # Default CSS class for auto-linked quotes
+    DEFAULT_QUOTES_CLASS  = "quoted".freeze
 
     # Default URL base for auto-linked usernames
     DEFAULT_USERNAME_URL_BASE = "/".freeze
@@ -42,6 +44,7 @@ module Twitter
       :hashtag_class  => DEFAULT_HASHTAG_CLASS,
       :cashtag_class  => DEFAULT_CASHTAG_CLASS,
       :place_class    => DEFAULT_PLACE_CLASS,
+      :quote_class    => DEFAULT_QUOTES_CLASS,
 
       :username_url_base => DEFAULT_USERNAME_URL_BASE,
       :list_url_base     => DEFAULT_LIST_URL_BASE,
@@ -89,6 +92,8 @@ module Twitter
           link_to_cashtag(entity, chars, options, &block)
         elsif entity[:place]
           link_to_place(entity, chars, options, &block)
+        elsif entity[:quote_id]
+          link_to_quote(entity, chars, options, &block)
         end
       end
     end
@@ -223,7 +228,7 @@ module Twitter
 
     # Options which should not be passed as HTML attributes
     OPTIONS_NOT_ATTRIBUTES = Set.new([
-      :url_class, :list_class, :username_class, :hashtag_class, :cashtag_class, :place_class,
+      :url_class, :list_class, :username_class, :hashtag_class, :cashtag_class, :place_class, :quote_class,
       :username_url_base, :list_url_base, :hashtag_url_base, :cashtag_url_base, :place_url_base,
       :username_url_block, :list_url_block, :hashtag_url_block, :cashtag_url_block, :link_url_block, :place_url_block,
       :username_include_symbol, :suppress_lists, :suppress_no_follow, :url_entities,
@@ -440,27 +445,34 @@ module Twitter
       link_to_text_with_symbol(entity, at, name_chunk, href, html_attrs, options)
     end
 
+    def link_to_quote(entity, chars, options = {})
+      quote_id  = entity[:quote_id]
+      quote_type = entity[:quote_type]
+      text = chars[entity[:indices][0]..entity[:indices][1]].join().rstrip
+      begin
+        record = quote_type.constantize&.find(quote_id)
+        puts "*" * 99
+        puts "FOUND A RECORD!"
+        puts "*" * 99
+        "<a href=\"#quoted-#{quote_id}-#{quote_type}\">#{text}</a>"
+      rescue
+        puts "*" * 99
+        puts "RESCUING"
+        puts "*" * 99
+        "<a href=\"#quoted-#{quote_id}-#{quote_type}\">#{text}</a>"
+      end
+    end
 
     def link_to_text_with_symbol(entity, symbol, text, href, attributes = {}, options = {})
       tagged_symbol = options[:symbol_tag] ? "<#{options[:symbol_tag]}>#{symbol}</#{options[:symbol_tag]}>" : symbol
       text = html_escape(text)
       tagged_text = options[:text_with_symbol_tag] ? "<#{options[:text_with_symbol_tag]}>#{text}</#{options[:text_with_symbol_tag]}>" : text
-      # puts "*" * 99
-      # puts entity
-      # puts symbol !~ Twitter::Regex::REGEXEN[:valid_hashtag]
-      # puts Twitter::Validation.valid_hashtag?(text)
-      # puts "*" * 99
+
       if entity.fetch(:hashtag, false)
         "#{link_to_text(entity, tagged_text, href, attributes, options)}"
       elsif (options[:username_include_symbol] || symbol !~ Twitter::Regex::REGEXEN[:at_signs])
-        # puts "*" * 99
-        # puts 1
-        # puts "*" * 99
         "#{link_to_text(entity, tagged_symbol + tagged_text, href, attributes, options)}"
       else
-        # puts "*" * 99
-        # puts 2
-        # puts "*" * 99
         "#{tagged_symbol}#{link_to_text(entity, tagged_text, href, attributes, options)}"
       end
     end
