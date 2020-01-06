@@ -452,7 +452,7 @@ module Twitter
       begin
         record = quote_type.constantize&.find(quote_id)
         by = "<span class='quoted-user'>@#{record.user.username}</span>"
-        "<a class=\"quote-link\" href=\"#quoted-#{quote_id}-#{quote_type}\" data-turbolinks=\"false\">#{text} #{by}</a>"
+        "<a class=\"quote-link\" href=\"#quoted-#{quote_id}-#{quote_type}\" data-turbolinks=\"false\">#{text}#{by}</a>"
       rescue
         "<a href=\"#quoted-#{quote_id}-#{quote_type}\">#{text}</a>"
       end
