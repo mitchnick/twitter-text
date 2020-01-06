@@ -127,12 +127,32 @@ Rspec::Matchers.define :have_autolinked_place do |place, name|
   failure_message_for_should_not do |text|
     "Expected link '#{@link.inner_text}' with href '#{@link.first['href']}' not to match the hashtag '#{place}', but it does."
   end
+end
 
+Rspec::Matchers.define :have_autolinked_quote do |record_id, record_type, content|
+  match do |text|
+    @link = Nokogiri::HTML(text).search("a[@href='#quoted-#{record_id}-#{record_type}']")
+    @link &&
+    @link.inner_text &&
+    @link.inner_text == content &&
+    @link.to_html == "<a href=\"#quoted-#{record_id}-#{record_type}\"><span class=\"quoted\" data-quoted=\"#{record_id}-#{record_type}\">#{content}</span></a>"
+  end
+
+  failure_message_for_should do |text|
+    if @link.first
+      "Expected link text to be [#{text}], but it was [#{@link.inner_text}] in #{text}"
+    else
+      "Expected hashtag #{text} to be autolinked in '#{text}', but no link was found."
+    end
+  end
+
+  failure_message_for_should_not do |text|
+    "Expected link '#{@link.inner_text}' with href '#{@link.first['href']}' not to match the hashtag '#{text}', but it does."
+  end
 end
 
 RSpec::Matchers.define :have_autolinked_hashtag do |hashtag|
   match do |text|
-    # @link = Nokogiri::HTML(text).search("a[@href='https://twitter.com/#!/search?q=#{hashtag.sub(/^#/, '%23')}']")
     @link = Nokogiri::HTML(text).search("a[@href='/groups/#{hashtag.sub(/^#/, '')}']")
     @link &&
     @link.inner_text &&

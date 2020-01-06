@@ -583,15 +583,14 @@ describe Twitter::Autolink do
         def original_text; "#{content} Other thoughts on the text"; end
 
         it "should be linked" do
-          # @autolinked_text.should have_autolinked_quote('5', 'My quoted text')
-          @autolinked_text.should eq('<a href="#quoted-5-TopicPost" data-turbolinks="false"><span class="quoted" data-quoted="5-TopicPost">My quoted text</span></a> Other thoughts on the text')
+          @autolinked_text.should have_autolinked_quote('5', 'TopicPost', 'My quoted text')
         end
       end
     end
 
     describe "Autolink all custom" do
       def content
-        '<p class="">Demoing this for Mike:As a hashtag - #surfing</p><p class="">As a user - <span class="atwho-inserted">@mitchnick</span> </p><p class="">As a place - <span class="atwho-inserted"><span class="place-inserted">⊙Mitchs_Tavern</span><span class="hidden" data-facebook-id="fb112463092102121"></span><span class="place-inserted-form">New_York</span></span> </p>'
+        '<p class="">Demoing this for Mike:As a hashtag - #surfing</p><p class="">As a user - <span class="atwho-inserted">@mitchnick</span> </p><p class="">As a place - <span class="atwho-inserted"><span class="place-inserted">⊙Mitchs_Tavern</span><span class="hidden" data-facebook-id="fb112463092102121"></span><span class="place-inserted-form">New_York</span></span> And a quote <span class="quoted" data-quoted="5-TopicPost">My quoted text</span></p>'
       end
 
       def original_text
@@ -602,6 +601,7 @@ describe Twitter::Autolink do
         @autolinked_text.should have_autolinked_hashtag('#surfing')
         @autolinked_text.should link_to_screen_name('mitchnick')
         @autolinked_text.should have_autolinked_place('fb112463092102121', 'Mitchs Tavern')
+        @autolinked_text.should have_autolinked_quote('5', 'TopicPost', 'My quoted text')
       end
     end
     # ********************************************
